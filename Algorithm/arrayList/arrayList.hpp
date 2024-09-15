@@ -1,23 +1,24 @@
 #pragma once
 #include <iostream>
+#include "list.h"
 
-const int initcap = 5;
 
 template <class T>
-class arrayList {
+class arrayList : public list<T>{
 
 public:
-    arrayList();
+    arrayList(int initSize = 8);
     arrayList(const arrayList<T>& s);
-    ~arrayList();
-    int getSize() const;
+    ~arrayList() { delete[] data; }
+    void clear() { size = 0; }
+    int length() const { return size; }
     void add(T e);
-    bool getElem(int i, T& e);
-    bool setElem(int i, T e);
-    int getNo(T e) const;
-    bool insert(int i, T e);
-    bool del(int i);
-    void printList();
+    T visit(int i) const { return data[i]; }
+    void setElem(int i, T e);
+    int search(const T &e) const;
+    void insert(int i, const T &x);
+    void remove(int i);
+    void traverse() const;
 
 
 private:
@@ -28,37 +29,28 @@ private:
     void recap(int newcap);
 };
 
-
 template <class T>
-arrayList<T>::arrayList()
+inline arrayList<T>::arrayList(int initSize)
 {
-    capacity = initcap;
-    data = new T[initcap];
+    data = new T[initSize];
+    capacity = initSize;
     size = 0;
 }
 
 template <class T>
-arrayList<T>::arrayList(const arrayList<T> &s)
+inline arrayList<T>::arrayList(const arrayList<T> &s)
 {
     capacity = s.capacity;
-    size = s.size;
     data = new T[capacity];
-    for (int i=0; i < size; i++) {
+    size = s.size;
+    for (int i=0; i<size; i++) {
         data[i] = s.data[i];
     }
 }
 
 template <class T>
-arrayList<T>::~arrayList() { delete[] data; }
-
-template <class T>
-int arrayList<T>::getSize() const
+inline void arrayList<T>::add(T e)
 {
-    return size;;
-}
-
-template <class T>
-void arrayList<T>::add(T e) {
     if (size == capacity) {
         recap(capacity * 2);
     }
@@ -67,41 +59,29 @@ void arrayList<T>::add(T e) {
 }
 
 template <class T>
-bool arrayList<T>::getElem(int i, T &e)
+inline void arrayList<T>::setElem(int i, T e)
 {
     if (i < 0 || i >= size) {
-        return false;
-    }
-    e = data[i];
-    return true;
-}
-
-template <class T>
-bool arrayList<T>::setElem(int i, T e)
-{
-    if (i < 0 || i >= size) {
-        return false;
+        return;
     }
     data[i] = e;
-    return true;
 }
 
 template <class T>
-int arrayList<T>::getNo(T e) const
+inline int arrayList<T>::search(const T &e) const
 {
-    for (int i=0; i<size; i++) {
-        if (data[i] == e) {
-            return i;
-        }
-    }
-    return -1;
+    int i;
+    for (i=0; i<size && data[i]!=e; i++);
+    if (i == size) { return -1; }   
+    else { return i; }
+        
 }
 
 template <class T>
-bool arrayList<T>::insert(int i, T e)
+inline void arrayList<T>::insert(int i, const T &x)
 {
     if (i < 0 || i > size) {
-        return false;
+        return;
     }
     if (size == capacity) {
         recap(capacity * 2);
@@ -109,45 +89,44 @@ bool arrayList<T>::insert(int i, T e)
     for (int j=size; j>i; j--) {
         data[j] = data[j-1];
     }
-    data[i] = e;
-    size++;
-    return true;
-
+    data[i] = x;
+    size++;   
 }
 
 template <class T>
-bool arrayList<T>::del(int i)
+inline void arrayList<T>::remove(int i)
 {
     if (i < 0 || i >= size) {
-        return false;
+        return;
     }
+
     for (int j=i; j<size-1; j++) {
         data[j] = data[j+1];
     }
     size--;
-    if (size > initcap && size <= capacity/4) {
+
+    if (size > 8 && size <= capacity/4) {
         recap(capacity / 2);
     }
-    return true;
 }
 
 template <class T>
-void arrayList<T>::printList()
+inline void arrayList<T>::traverse() const
 {
     for (int i=0; i<size; i++) {
         std::cout << data[i] << " ";
     }
-    std::cout << '\n';
+    std::cout << std::endl;
 }
 
 template <class T>
-void arrayList<T>::recap(int newcap) {
-    if (newcap <= 0 ) return;
-    T* newdata = new T[newcap];
+inline void arrayList<T>::recap(int newcap)
+{
+    T* tmp = data;
+    data = new T[newcap];
     capacity = newcap;
     for (int i=0; i<size; i++) {
-        newdata[i] = data[i];
+        data[i] = tmp[i];
     }
-    delete[] data;
-    data = newdata;
+    delete[] tmp;
 }
