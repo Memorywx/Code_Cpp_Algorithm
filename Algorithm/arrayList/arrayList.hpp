@@ -13,7 +13,7 @@ public:
     void clear() { size = 0; }
     int length() const { return size; }
     void add(T e);
-    T visit(int i) const { return data[i]; }
+    T visit(int i) const;
     void setElem(int i, T e);
     int search(const T &e) const;
     void insert(int i, const T &x);
@@ -56,6 +56,15 @@ inline void arrayList<T>::add(T e)
     }
     data[size] = e;
     size++;
+}
+
+template <class T>
+inline T arrayList<T>::visit(int i) const
+{
+    if (i < 0 || i >= size) {
+        return;
+    }
+    return data[i];
 }
 
 template <class T>
