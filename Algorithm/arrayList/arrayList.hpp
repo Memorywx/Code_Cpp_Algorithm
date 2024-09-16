@@ -7,13 +7,13 @@ template <class T>
 class arrayList : public list<T>{
 
 public:
-    arrayList(int initSize = 8);
+    arrayList(int initCap = 8);
     arrayList(const arrayList<T>& s);
     ~arrayList() { delete[] data; }
     void clear() { size = 0; }
     int length() const { return size; }
     void add(T e);
-    T visit(int i) const;
+    T visit(int i) const { return data[i]; }
     void setElem(int i, T e);
     int search(const T &e) const;
     void insert(int i, const T &x);
@@ -30,10 +30,10 @@ private:
 };
 
 template <class T>
-inline arrayList<T>::arrayList(int initSize)
+inline arrayList<T>::arrayList(int initCap)
 {
-    data = new T[initSize];
-    capacity = initSize;
+    data = new T[initCap];
+    capacity = initCap;
     size = 0;
 }
 
@@ -41,8 +41,8 @@ template <class T>
 inline arrayList<T>::arrayList(const arrayList<T> &s)
 {
     capacity = s.capacity;
-    data = new T[capacity];
     size = s.size;
+    data = new T[capacity];
     for (int i=0; i<size; i++) {
         data[i] = s.data[i];
     }
@@ -58,14 +58,6 @@ inline void arrayList<T>::add(T e)
     size++;
 }
 
-template <class T>
-inline T arrayList<T>::visit(int i) const
-{
-    if (i < 0 || i >= size) {
-        return;
-    }
-    return data[i];
-}
 
 template <class T>
 inline void arrayList<T>::setElem(int i, T e)
@@ -81,9 +73,8 @@ inline int arrayList<T>::search(const T &e) const
 {
     int i;
     for (i=0; i<size && data[i]!=e; i++);
-    if (i == size) { return -1; }   
+    if (i == size) { return -1; }
     else { return i; }
-        
 }
 
 template <class T>
@@ -99,7 +90,7 @@ inline void arrayList<T>::insert(int i, const T &x)
         data[j] = data[j-1];
     }
     data[i] = x;
-    size++;   
+    size++;
 }
 
 template <class T>
@@ -108,13 +99,11 @@ inline void arrayList<T>::remove(int i)
     if (i < 0 || i >= size) {
         return;
     }
-
     for (int j=i; j<size-1; j++) {
         data[j] = data[j+1];
     }
     size--;
-
-    if (size > 8 && size <= capacity/4) {
+    if (size > 8 && size <= capacity / 4) {
         recap(capacity / 2);
     }
 }
