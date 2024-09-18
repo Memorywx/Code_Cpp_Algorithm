@@ -18,6 +18,7 @@ public:
     void addLast(T e);
     void setElem(int i, T e);
     void traverse() const;
+    bool isEmpty() const;
 
 private:
     struct node {
@@ -53,7 +54,7 @@ inline void slinkList<T>::clear()
     node *p, *q;
     p = head->next;
     head->next = nullptr;
-    while ( p != nullptr ) {
+    while (p != nullptr) {
         q = p->next;
         delete p;
         p = q;
@@ -111,7 +112,7 @@ inline T slinkList<T>::visit(int i) const
 template <class T>
 inline void slinkList<T>::addLast(T e)
 {
-    node *p = move(size-1);
+    node* p = move(size-1);
     p->next = new node(e);
     size++;
 }
@@ -119,7 +120,7 @@ inline void slinkList<T>::addLast(T e)
 template <class T>
 inline void slinkList<T>::setElem(int i, T e)
 {
-    if (i < 0 || i >=size) {
+    if (i < 0 || i >= size) {
         return;
     }
     node *p = move(i);
@@ -135,6 +136,12 @@ inline void slinkList<T>::traverse() const
         p = p->next;
     }
     std::cout << std::endl;
+}
+
+template <class T>
+inline bool slinkList<T>::isEmpty() const
+{
+    return size == 0;
 }
 
 template <class T>

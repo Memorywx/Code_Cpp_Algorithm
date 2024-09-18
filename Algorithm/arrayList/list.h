@@ -12,7 +12,8 @@ class list {
   virtual int search(const T &x) const = 0;
   virtual T visit(int i) const = 0;  // 访问线性表第i个元素
   virtual void traverse() const = 0;        // 遍历线性表
-  virtual void add(T e) = 0;      // 添加元素 
+  virtual void addLast(T e) = 0;      // 添加元素 
   virtual void setElem(int i, T e) = 0;    // 设置第i个元素
   virtual ~list() {};
+  virtual bool isEmpty() const = 0;   // 判断是否为空
 };
