@@ -59,6 +59,7 @@ inline void binaryTree<T>::clear(Node *&t)     // 私有函数 clear
     clear(t->right);
     delete t;
     t = nullptr;
+    
 }
 
 template <typename T>
@@ -73,21 +74,20 @@ inline void binaryTree<T>::createTree(T flag)
     // 创建树，若输入值为flag，则表示创建空子结点
     seqQueue<Node *> que;
     Node *tmp;
-    T x, ldata, rdata;
-
-    std::cout << "输入根结点：";
+    T x;
+    std::cout << "请输入根结点: ";
     std::cin >> x;
     root = new Node(x);
     que.enQueue(root);
-
     while (!que.isEmpty()) {
         tmp = que.deQueue();
-        std::cout << "\n输入" << tmp->data << "的两个子结点(" << flag << "表示空结点): ";
-        std::cin >> ldata >> rdata;
-        if (ldata != flag) que.enQueue(tmp->left = new Node(ldata));
-        if (rdata != flag) que.enQueue(tmp->right = new Node(rdata));
+        T l_data, r_data;
+        std::cout << "\n请输入" << tmp->data << "的两个子结点(输入" << flag << "表示空结点): ";
+        std::cin >> l_data >> r_data;
+        if (l_data != flag) que.enQueue(tmp->left = new Node(l_data));
+        if (r_data != flag) que.enQueue(tmp->right = new Node(r_data));
     }
-    std::cout << "create completed!\n";
+    std::cout <<  "create completed!" << "\n";
 }
 
 template <typename T>
@@ -109,9 +109,9 @@ inline typename binaryTree<T>::Node *binaryTree<T>::find(T x, Node *t) const
     Node *tmp;
     if (t == nullptr) return nullptr;
     if (t->data == x) return t;
-    if (tmp = find(x, t->left))        // 若找左找到了，则返回tmp; 
-        return tmp;
-    else return find(x, t->right);     // 找左没找到，找右边
+    if (tmp = find(x, t->left)) 
+        return tmp;                         // 若找左找到了，则返回tmp 
+    else return find(x, t->right);          // 找左没找到，找右边
 }
 
 template <typename T>
@@ -119,7 +119,9 @@ inline T binaryTree<T>::lchild(T x, T flag) const
 {
     // 找结点x的左子结点值，若x不存在或x的左子结点不存在，则返回flag
     Node *tmp = find(x, root);
-    if (tmp == nullptr || tmp->left == nullptr) return flag;
+    if (tmp == nullptr || tmp->left == nullptr) {
+        return flag;
+    }
     return tmp->left->data;
 }
 
@@ -128,7 +130,9 @@ inline T binaryTree<T>::rchild(T x, T flag) const
 {
     // 找结点x的右子结点值，若x不存在或x的右子结点不存在，则返回flag
     Node *tmp = find(x, root);
-    if (tmp == nullptr || tmp->right == nullptr) return flag;
+    if (tmp == nullptr || tmp->right == nullptr) {
+        return flag;
+    }
     return tmp->right->data;
 }
 
@@ -139,6 +143,7 @@ inline void binaryTree<T>::delLeft(T x)
     Node *tmp = find(x, root);
     if (tmp == nullptr) return;
     clear(tmp->left);
+    
 }
 
 template <typename T>
@@ -148,6 +153,7 @@ inline void binaryTree<T>::delRight(T x)
     Node *tmp = find(x, root);
     if (tmp == nullptr) return;
     clear(tmp->right);
+    
 }
 
 template <typename T>
@@ -158,14 +164,14 @@ inline void binaryTree<T>::preOrder(Node *t) const     // 私有函数 preOrder
     std::cout << t->data << " ";
     preOrder(t->left);
     preOrder(t->right);
+    
 }
 
 template <typename T>
 inline void binaryTree<T>::preOrder() const
 {
-    std::cout << "前序遍历：";
+    std::cout << "\n前序遍历: ";
     preOrder(root);
-    std::cout << "\n";
 }
 
 template <typename T>
@@ -174,7 +180,7 @@ inline void binaryTree<T>::midOrder(Node *t) const    // 私有函数 midOrder
     // 中序遍历二叉树
     if (t == nullptr) return;
     midOrder(t->left);
-    std::cout<< t->data << " ";
+    std::cout << t->data << " ";
     midOrder(t->right);
 }
 
@@ -182,45 +188,42 @@ inline void binaryTree<T>::midOrder(Node *t) const    // 私有函数 midOrder
 template <typename T>
 inline void binaryTree<T>::midOrder() const
 {
-    std::cout << "中序遍历：";
+    std::cout << "\n中序遍历: ";
     midOrder(root);
-    std::cout << "\n";
 }
 
 template <typename T>
 inline void binaryTree<T>::postOrder(Node *t) const   // 私有函数postOrder
 {
+    // 后序遍历二叉树
     if (t == nullptr) return;
     postOrder(t->left);
     postOrder(t->right);
-    std::cout << t->data << " "; 
+    std::cout << t->data << " ";
 }
 
 template <typename T>
 inline void binaryTree<T>::postOrder() const
 {
-    std::cout << "后序遍历：";
+    std::cout << "\n后序遍历: ";
     postOrder(root);
-    std::cout << "\n";
 }
 
 template <typename T>
 inline void binaryTree<T>::levelOrder() const
 {
-    seqQueue<Node *> que;
-    Node *tmp;
-
-    std::cout << "层次遍历：";
+    // 层次遍历
+    std::cout << "\n层次遍历: ";
     if (root == nullptr) return;
+    seqQueue<Node*> que;
+    Node *tmp;
     que.enQueue(root);
-
     while (!que.isEmpty()) {
         tmp = que.deQueue();
         std::cout << tmp->data << " ";
         if (tmp->left) que.enQueue(tmp->left);
         if (tmp->right) que.enQueue(tmp->right);
     }
-    std::cout << "\n";
 }
 
 
