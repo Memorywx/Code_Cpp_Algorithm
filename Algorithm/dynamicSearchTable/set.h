@@ -12,7 +12,7 @@ struct SET {
 };
 
 template <class KEY, class OTHER>
-bool compareByKey(const SET<KEY, OTHER> &s1, const SET<KEY, OTHER> &S2) {
+bool compareByKey(const SET<KEY, OTHER> &s1, const SET<KEY, OTHER> &s2) {
     return s1.key < s2.key;
 }
 
