@@ -62,27 +62,27 @@ inline void AVLTree<KEY, OTHER>::insert(const SET<KEY, OTHER> &x)
 }
 
 
-
 template <class KEY, class OTHER>
 inline void AVLTree<KEY, OTHER>::insert(const SET<KEY, OTHER> &x, AVLNode *&t)
 {
     if (t == nullptr) t = new AVLNode(x);
-    else if (x.key < t->data.key) 
-    {
-        insert(x, t->left);  // 在左子树插入
+    else if (x.key < t->data.key) {
+        // 在左子树插入
+        insert(x, t->left);
         if (height(t->left) - height(t->right) == 2) {  // 检查是否失衡
-            if (x.key < t->left->data.key) LL(t); else LR(t);
+            if (x.key < t->left->data.key) LL(t); else LR(t); 
         }
     }
-    else if (x.key > t->data.key)
-    {
+    else if (x.key > t->data.key) {
         insert(x, t->right);
         if (height(t->right) - height(t->left) == 2) {
-            if (x.key < t->right->data.key) RL(t); else RR(t);
+            if (x.key > t->right->data.key) RR(t); else RL(t);
         }
     }
+         
     // 重新计算高度
     t->height = max(height(t->left), height(t->right)) + 1;
+    
 }
 
 
@@ -131,7 +131,6 @@ inline void AVLTree<KEY, OTHER>::RL(AVLNode *&t)
     RR(t);
 }
 
-
 template <class KEY, class OTHER>
 inline void AVLTree<KEY, OTHER>::remove(const KEY &x)
 {
@@ -152,13 +151,13 @@ inline bool AVLTree<KEY, OTHER>::remove(const KEY &x, AVLNode *&t)
         }
         else {
             // 待删除结点有两个子结点
-            AVLNode *tmp = t->right;
-            while (tmp->left != nullptr) tmp = tmp->left;
-            t->data = tmp->data;
-            if (remove(tmp->data.key, t->right)) return true;
-            return adjust(t, 1); 
-        }
-    } 
+            AVLNode *t1 = t->right;
+            while (t1->left != nullptr) t1 = t1->left;
+            t->data = t1->data;
+            if (remove(t1->data.key, t->right)) return true;
+            return adjust(t, 1);
+        }       
+    }
     else if (x < t->data.key) {
         if (remove(x, t->left)) return true;
         return adjust(t, 0);
@@ -167,17 +166,17 @@ inline bool AVLTree<KEY, OTHER>::remove(const KEY &x, AVLNode *&t)
         if (remove(x, t->right)) return true;
         return adjust(t, 1);
     }
+       
 }
 
 template <class KEY, class OTHER>
 inline bool AVLTree<KEY, OTHER>::adjust(AVLNode *&t, int subTree)
 {
     // subTree == 1 代表右子树   subTree == 0 代表左子树
-
     if (subTree) {
         // 在右子树上删除
         if (height(t->left) - height(t->right) == 1) return true;
-        if (height(t->right) == height(t->left)) {
+        if (height(t->left) == height(t->right)) {
             --t->height;
             return false;
         }
@@ -186,22 +185,26 @@ inline bool AVLTree<KEY, OTHER>::adjust(AVLNode *&t, int subTree)
             return false;
         }
         LL(t);
-        if(height(t->right) == height(t->right)) return false; else return true;
+        if (height(t->left) == height(t->right)) return false; else return true;
+    }
 
-    } else {
         // 在左子树上删除
+    else {
         // 情况1. t是平衡的
         if (height(t->right) - height(t->left) == 1) return true;
         // 情况2. t是左高右低的
-        if (height(t->left) == height(t->right)) {
+        if (height(t->left) == height(t->right)){
             --t->height;
             return false;
         }
         // 情况3 t是右高左低的
         // 3.2 t的右子树是左高右低的
-        if (height(t->right->left) > height(t->right->right)) RL(t);
-        // 3.1 t的右子树是左低右高的(旋转后完全平衡，但高度减1) 或 平衡的(旋转后高度不变)
+        if (height(t->right->left) > height(t->right->right)) {
+            RL(t);
+            return false;
+        }
         RR(t);
-        if (height(t->right) == height(t->left)) return false; else return true;
+        // 3.1 t的右子树是左低右高的(旋转后完全平衡，但高度减1) 或 平衡的(旋转后高度不变)
+        if (height(t->left) == height(t->right)) return false; else return true;
     }
 }
