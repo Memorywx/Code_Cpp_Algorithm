@@ -18,6 +18,7 @@ public:
     ~adjListGraph();
     void dfs() const;
     void bfs() const;
+    void topSort() const;  // 拓扑排序
 
 private:
     struct edgeNode
@@ -130,14 +131,12 @@ inline void adjListGraph<TypeOfVer, TypeOfEdge>::dfs() const
     bool *visited = new bool[this->Vers];
     for (int i=0; i<this->Vers; ++i) visited[i] = false;
 
-    std::cout << "当前图的深度优先遍历序列为: " << '\n';
+    std::cout << "当前图的dfs遍历序列为: " << '\n';
     for (int i=0; i<this->Vers; i++) {
         if (visited[i] == true) continue;
         dfs(i, visited);
         std::cout << '\n';
     }
-
-
 }
 
 
@@ -163,7 +162,7 @@ inline void adjListGraph<TypeOfVer, TypeOfEdge>::bfs() const
     seqQueue<int> que;
     edgeNode *p;
     for (int i=0; i<this->Vers; ++i) visited[i] = false;
-    std::cout << "当前图的广度优先遍历序列为: " << '\n';
+    std::cout << "当前图的bfs遍历序列为: " << '\n';
     for (int i=0; i<this->Vers; ++i) {
         if (visited[i] == true) continue;
         que.enQueue(i);
@@ -180,5 +179,37 @@ inline void adjListGraph<TypeOfVer, TypeOfEdge>::bfs() const
         }
     }
     std::cout << '\n';
-} 
+}
 
+template <class TypeOfVer, class TypeOfEdge>
+inline void adjListGraph<TypeOfVer, TypeOfEdge>::topSort() const
+{
+    seqQueue<int> que;
+    edgeNode* p;
+    int current;
+    int *inDegree = new int[this->Vers];
+    for (int i=0; i<this->Vers; ++i) inDegree[i] = 0;
+    for (int i=0; i<this->Vers; ++i) {
+        p = verList[i].head;
+        while (p != nullptr) {
+            ++inDegree[p->end];
+            p = p->next;
+        }
+    }
+    for (int i=0; i<this->Vers; ++i) {
+        if (inDegree[i] == 0) {
+            que.enQueue(i);
+        }
+    }
+    std::cout << "拓扑排序为: " << '\n';
+    while (!que.isEmpty()) {
+        current = que.deQueue();
+        std::cout << verList[current].ver << '\t';
+        for (p = verList[current].head; p != nullptr; p = p->next) {
+            if (--inDegree[p->end] == 0) {
+                que.enQueue(p->end);
+            }
+        }
+    }
+    std::cout << '\n';
+}
