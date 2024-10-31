@@ -19,6 +19,7 @@ public:
     void dfs() const;
     void bfs() const;
     void topSort() const;  // 拓扑排序
+    void criticalPath() const;   // 关键路径
 
 private:
     struct edgeNode
@@ -209,6 +210,70 @@ inline void adjListGraph<TypeOfVer, TypeOfEdge>::topSort() const
             if (--inDegree[p->end] == 0) {
                 que.enQueue(p->end);
             }
+        }
+    }
+    std::cout << '\n';
+}
+
+template <class TypeOfVer, class TypeOfEdge>
+inline void adjListGraph<TypeOfVer, TypeOfEdge>::criticalPath() const
+{
+    TypeOfEdge* ee = new TypeOfEdge[this->Vers];   // 最早发生时间序列
+    TypeOfEdge* le = new TypeOfEdge[this->Vers];   // 最晚发生时间序列
+    int* top = new int[this->Vers];   // 记录拓扑排序序列
+    int* inDegree = new int[this->Vers];  // 记录每个节点的入度
+    seqQueue<int> que;
+    int i;
+    edgeNode* p;
+
+    for (i = 0; i < this->Vers; ++i) inDegree[i] = 0;
+    for (i = 0; i < this->Vers; ++i) {
+        for (p = verList[i].head; p != nullptr; p = p->next) {
+            ++inDegree[p->end];
+        }
+    }
+    // 将入度为0的入队
+    for (i = 0; i < this->Vers; ++i) {
+        if (inDegree[i] == 0) {
+            que.enQueue(i);
+        }
+    }
+    // 拓扑排序
+    i = 0;
+    while (!que.isEmpty()) {
+        top[i] = que.deQueue();
+        for (p = verList[top[i]].head; p != nullptr; p = p->next) {
+            if (--inDegree[p->end] == 0) {
+                que.enQueue(p->end);
+            }
+        }
+        ++i;
+    }
+
+    // 找最早发生时间
+    for (i = 0; i < this->Vers; ++i) ee[i] = 0;
+    for (i = 0; i < this->Vers; ++i) {
+        for (p = verList[top[i]].head; p != nullptr; p = p->next) {
+            if (ee[p->end] < ee[top[i]] + p->weight) {
+                ee[p->end] = ee[top[i]] + p->weight;
+            }
+        }
+    }
+
+    // 找最晚发生时间
+    for (i = 0; i < this->Vers; ++i) le[i] = ee[top[this->Vers-1]];
+    for (i = this->Vers - 1; i >=0; --i) {
+        for (p = verList[top[i]].head; p != nullptr; p = p->next) {
+            if (le[p->end] - p->weight < le[top[i]])  {
+                le[top[i]] = le[p->end] - p->weight;
+            }
+        }
+    }
+
+    // 找出关键路径
+    for (i = 0; i < this->Vers; ++i) {
+        if (ee[top[i]] == le[top[i]]) {
+            std::cout << '(' << verList[top[i]].ver << ',' << ee[top[i]] << ')';
         }
     }
     std::cout << '\n';
